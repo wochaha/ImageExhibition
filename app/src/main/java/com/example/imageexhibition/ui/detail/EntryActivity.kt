@@ -5,6 +5,7 @@ import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.example.imageexhibition.R
 import com.example.imageexhibition.base.BaseActivity
+import com.example.imageexhibition.base.BaseViewModel
 
 class EntryActivity : BaseActivity() {
     private val title by lazy {
@@ -24,19 +25,12 @@ class EntryActivity : BaseActivity() {
 
         initView(R.layout.activity_entry)
 
-        addFragment(fragment)
+        addFragment(R.id.entry_container,fragment)
     }
 
     override fun initView(@LayoutRes layoutRes: Int) {
         super.initView(layoutRes)
         setContentView(layoutRes)
         mCommonToolbar.init(title ?: "")
-    }
-
-    private fun addFragment(fragment: Fragment){
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.entry_container,fragment)
-            .commitAllowingStateLoss()
     }
 }

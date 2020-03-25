@@ -4,11 +4,15 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.imageexhibition.R
@@ -19,10 +23,6 @@ open class BaseActivity : AppCompatActivity() {
     //init view
     val mCommonToolbar:androidx.appcompat.widget.Toolbar
         get() = toolbar
-
-    private val mViewModel:BaseViewModel by lazy {
-        getViewModel(BaseViewModel::class.java)
-    }
 
     //extension function for toolbar(androidx)
     public fun androidx.appcompat.widget.Toolbar.init(
@@ -72,34 +72,11 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        this.mViewModel.register()
+    fun addFragment(@IdRes layoutIdRes: Int, fragment: Fragment){
+        Log.d(this::class.java.simpleName,"add fragment")
+        this.supportFragmentManager
+            .beginTransaction()
+            .add(layoutIdRes,fragment)
+            .commitAllowingStateLoss()
     }
-
-    override fun onRestart() {
-        super.onRestart()
-        this.mViewModel.register()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        this.mViewModel.register()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        this.mViewModel.unRegister()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        this.mViewModel.unRegister()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        this.mViewModel.unRegister()
-    }
-
 }

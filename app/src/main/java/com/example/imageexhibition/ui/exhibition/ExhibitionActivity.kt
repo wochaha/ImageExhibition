@@ -44,12 +44,11 @@ class ExhibitionActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mViewModel.register()
         initView(R.layout.activity_main)
         observer()
 
         //update data
-        mViewModel.getInfoFromNetwork()
+        mViewModel.update()
     }
 
     override fun initView(layoutRes: Int) {
@@ -68,7 +67,7 @@ class ExhibitionActivity : BaseActivity() {
                 ContextCompat.getColor(context, R.color.black)
             )
             setOnRefreshListener {
-                mViewModel.getInfoFromNetwork()
+                mViewModel.update()
             }
         }
     }
@@ -76,14 +75,13 @@ class ExhibitionActivity : BaseActivity() {
     private fun observer(){
         //可以考虑抽到adapter中使用AdapterDataObservable监听该LiveData
         mViewModel.mInformationList.observe(this, Observer { list ->
-            Log.d(STAG,"data count: ${list.size}")
             mExhibitionAdapter.exhibitions.clear()
             mExhibitionAdapter.exhibitions.addAll(list)
-            Log.d(STAG,"adapter data count: ${mExhibitionAdapter.itemCount}")
+
             mExhibitionAdapter.notifyDataSetChanged()
         })
-        mViewModel.mUpdateStatus.observe(this, Observer { status->
-            toast(status)
+        mViewModel.mUpdateStatus.observe(this, Observer { result->
+            toast(result)
         })
         mViewModel.mRefreshStatus.observe(this, Observer { status->
             mSwipeRefreshLayout.isRefreshing = status
@@ -108,39 +106,6 @@ class ExhibitionActivity : BaseActivity() {
         if (msg.isNotEmpty() && !msg.isBlank()){
             Toast.makeText(this,msg,Toast.LENGTH_SHORT).show()
         }
-    }
-
-    //最好是可以抽象一个ViewModel基类和Activity基类
-    //在基类完成创建一个方法实现通过传入的factory和ViewModel.class获取对应的ViewModel
-    //实现在生命周期内对ViewModel的注册和解绑
-    override fun onStart() {
-        super.onStart()
-        mViewModel.register()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        mViewModel.register()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mViewModel.register()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mViewModel.unRegister()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mViewModel.unRegister()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mViewModel.unRegister()
     }
 
     companion object{

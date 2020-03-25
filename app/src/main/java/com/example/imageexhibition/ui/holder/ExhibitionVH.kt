@@ -1,7 +1,6 @@
 package com.example.imageexhibition.ui.holder
 
 import android.content.Intent
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -9,9 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.imageexhibition.R
 import com.example.imageexhibition.model.ImageAndTextModel
 import com.example.imageexhibition.ui.detail.EntryActivity
-import com.example.imageexhibition.ui.exhibition.ExhibitionViewModel
 import com.example.imageexhibition.util.fix
-import com.example.imageexhibition.util.margin
 import kotlinx.android.synthetic.main.item_exhibition.view.*
 
 class ExhibitionVH(view:View) : RecyclerView.ViewHolder(view) {

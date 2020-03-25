@@ -1,42 +1,47 @@
 package com.example.imageexhibition.ui.exhibition
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.imageexhibition.base.BaseRepository
 import com.example.imageexhibition.model.ImageAndTextModel
 import com.example.imageexhibition.util.ApiServer
 import com.example.imageexhibition.util.ApiService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import java.util.*
+import kotlin.collections.ArrayList
 
-class ExhibitionRepository {
+class ExhibitionRepository:BaseRepository() {
     private var mPage:Int = 0
     val mErrorMessage = MutableLiveData<String>()
-    val mNewReceiveInformationNum = MutableLiveData<Int>()
+    val mNewReceiveNum = MutableLiveData<Int>()
     val mInformationList = MutableLiveData<MutableList<ImageAndTextModel>>()
     val mRefreshStatus = MutableLiveData<Boolean>()
     val mUpdateStatus = MutableLiveData<Boolean>()
 
     init {
         mErrorMessage.value = ""
-        mNewReceiveInformationNum.value = 0
+        mNewReceiveNum.value = 0
         mInformationList.value = mutableListOf()
         mRefreshStatus.value = true
         mUpdateStatus.value = false
     }
 
-    fun update(){
+    override fun update(){
         GlobalScope.launch(Dispatchers.Main) {
             mRefreshStatus.value = true
             try {
-                val result = updateContent()
-                mNewReceiveInformationNum.value = result.size
+                val result:MutableList<ImageAndTextModel> = updateContent()
+
+                mNewReceiveNum.value = result.size
+                Log.d("ExhibitionRepository","拉取到${mNewReceiveNum.value}条数据~")
 
                 result.addAll(mInformationList.value!!)
                 mInformationList.value = result
 
                 mUpdateStatus.value = true
                 mPage += 1
+
             }catch (e:Throwable){
                 mUpdateStatus.value = false
                 mErrorMessage.value = e.message
@@ -44,6 +49,10 @@ class ExhibitionRepository {
                 mRefreshStatus.value = false
             }
         }
+    }
+
+    override fun cancel(){
+        GlobalScope.cancel()
     }
 
     private suspend fun updateContent():MutableList<ImageAndTextModel>{

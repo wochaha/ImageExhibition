@@ -49,19 +49,9 @@ class ImageFragment private constructor(): Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //todo 图像相关操作
-        GlobalScope.launch(Dispatchers.Main) {
-
-            val bitmap = withContext(Dispatchers.IO){
-                Glide.with(this@ImageFragment)
-                    .asBitmap()
-                    .load(url)
-                    .submit()
-                    .get()
-            }
-
-            detail_image.setImageBitmap(bitmap)
-        }
+        Glide.with(this)
+            .load(url)
+            .into(detail_image)
 
     }
 
